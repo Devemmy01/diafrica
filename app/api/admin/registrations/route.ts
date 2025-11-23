@@ -24,18 +24,44 @@ export async function GET(request: Request) {
     const MONGODB_DB = process.env.MONGODB_DB;
 
     if (MONGODB_URI) {
-      const { db } = await connectToDatabase(MONGODB_URI, MONGODB_DB);
-      const registrations = await db
-        .collection('registrations')
-        .find({})
-        .sort({ createdAt: -1 })
-        .toArray();
-      
-      return NextResponse.json({ 
-        source: 'mongodb',
-        count: registrations.length,
-        registrations 
-      });
+      try {
+        const { db } = await connectToDatabase(MONGODB_URI, MONGODB_DB);
+        const registrations = await db
+          .collection('registrations')
+          .find({})
+          .sort({ createdAt: -1 })
+          .toArray();
+        
+        return NextResponse.json({ 
+          source: 'mongodb',
+          count: registrations.length,
+          registrations 
+        });
+      } catch (mongoErr: any) {
+        console.error('MongoDB connection error:', mongoErr);
+        // Fallback to file storage if MongoDB fails
+        const dataDir = path.join(process.cwd(), 'data');
+        const registrationsFile = path.join(dataDir, 'registrations.json');
+        
+        try {
+          const raw = await fs.readFile(registrationsFile, 'utf8');
+          const registrations = JSON.parse(raw || '[]');
+          
+          return NextResponse.json({ 
+            source: 'file-fallback',
+            count: registrations.length,
+            registrations,
+            mongoError: mongoErr.message 
+          });
+        } catch (e) {
+          return NextResponse.json({ 
+            source: 'file-fallback',
+            count: 0,
+            registrations: [],
+            mongoError: mongoErr.message 
+          });
+        }
+      }
     } else {
       // Read from file
       const dataDir = path.join(process.cwd(), 'data');
@@ -59,6 +85,7 @@ export async function GET(request: Request) {
       }
     }
   } catch (err: any) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    console.error('Admin API error:', err);
+    return NextResponse.json({ error: String(err), message: err.message }, { status: 500 });
   }
 }

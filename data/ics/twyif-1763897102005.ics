@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//DI Africa//TWYIF//EN
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VEVENT
+UID:twyif-1763897101999@diafrica
+DTSTAMP:20251123T112501Z
+DTSTART:20251209T110000Z
+DTEND:20251209T123000Z
+SUMMARY:Public Presentation: Women & Youth Impact Fund (TWYIF)
+DESCRIPTION:Public Presentation of the TWYIF. Hosted by WAG in partnership with DI Africa and NIIA.
+LOCATION:Nigerian Institute of International Affairs (NIIA), Plot 13/15 Kofo Abayomi Street, Victoria Island, Lagos
+END:VEVENT
+END:VCALENDAR

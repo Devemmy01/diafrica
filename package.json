@@ -9,9 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
+    "mongodb": "^7.0.0",
     "next": "16.0.3",
+    "nodemailer": "^6.9.4",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "resend": "^6.5.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

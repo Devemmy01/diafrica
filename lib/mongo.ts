@@ -9,8 +9,10 @@ export async function connectToDatabase(uri: string, dbName?: string) {
   }
 
   const client = new MongoClient(uri, {
-    serverSelectionTimeoutMS: 5000, // 5 second timeout
-    connectTimeoutMS: 5000,
+    serverSelectionTimeoutMS: 30000, // 30 second timeout
+    connectTimeoutMS: 30000,
+    retryWrites: true,
+    retryReads: true,
   });
   
   await client.connect();

@@ -34,11 +34,12 @@ export async function POST(request: Request) {
 
     const ics = generateICS({ start, end, summary, description, location });
 
-    const FROM_EMAIL = process.env.FROM_EMAIL || 'no-reply@diafrica.local';
+    const FROM_EMAIL = process.env.FROM_EMAIL || 'emmanx25@gmail.com';
+    const FROM_NAME = process.env.FROM_NAME || 'TWYIF Event Team';
     let emailSent = false;
     let sendError: string | null = null;
 
-    // Try Resend first
+    // Try Resend
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
     if (RESEND_API_KEY) {
       try {
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
         const resend = new Resend(RESEND_API_KEY);
 
         await resend.emails.send({
-          from: FROM_EMAIL,
+          from: `${FROM_NAME} <${FROM_EMAIL}>`,
           to: email,
           subject: 'RSVP: Public Presentation of the Women & Youth Impact Fund (TWYIF)',
           text: `Thank you for signing up for the Public Presentation of the 10 Billion Naira Women and Youth Impact Fund (TWYIF).\n\nWe look forward to you gracing the occasion with your participation.\n\nYours truly,\nThe organising committee.`,
@@ -61,48 +62,10 @@ export async function POST(request: Request) {
         emailSent = true;
       } catch (e: any) {
         sendError = e?.message || String(e);
+        console.error('Resend email error:', sendError);
       }
     } else {
-      // Try SMTP if configured
-      const SMTP_HOST = process.env.SMTP_HOST;
-      const SMTP_PORT = process.env.SMTP_PORT;
-      const SMTP_USER = process.env.SMTP_USER;
-      const SMTP_PASS = process.env.SMTP_PASS;
-
-      if (SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS) {
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          const nodemailer = require('nodemailer');
-
-          const transporter = nodemailer.createTransport({
-            host: SMTP_HOST,
-            port: Number(SMTP_PORT),
-            secure: Number(SMTP_PORT) === 465,
-            auth: { user: SMTP_USER, pass: SMTP_PASS },
-          });
-
-          const mailOptions = {
-            from: FROM_EMAIL,
-            to: email,
-            subject: 'RSVP: Public Presentation of the Women & Youth Impact Fund (TWYIF)',
-            text: `Thank you for signing up for the Public Presentation of the 10 Billion Naira Women and Youth Impact Fund (TWYIF).\n\nWe look forward to you gracing the occasion with your participation.\n\nYours truly,\nThe organising committee.`,
-            attachments: [
-              {
-                filename: 'twyif-invite.ics',
-                content: ics,
-                contentType: 'text/calendar; charset=UTF-8; method=REQUEST',
-              },
-            ],
-          };
-
-          await transporter.sendMail(mailOptions);
-          emailSent = true;
-        } catch (err: any) {
-          sendError = err?.message || String(err);
-        }
-      } else {
-        sendError = 'No email provider configured';
-      }
+      sendError = 'Email provider not configured';
     }
 
     return NextResponse.json({ success: emailSent, emailSent, sendError });

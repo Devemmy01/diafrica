@@ -85,6 +85,7 @@ export default function RegisterPage() {
                 className="input"
                 required
                 value={name}
+                name='name'
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Dr. Ifeyinwa Nwakwesi"
               />
@@ -96,6 +97,7 @@ export default function RegisterPage() {
                 className="input"
                 required
                 type="email"
+                name='email'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
@@ -107,6 +109,7 @@ export default function RegisterPage() {
               <input
                 className="input"
                 value={phone}
+                name='phone'
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+234 800 000 0000"
               />

@@ -26,7 +26,8 @@ export async function POST(request: Request) {
 
     const ics = generateICS({ start, end, summary, description, location });
 
-    const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
+    const FROM_EMAIL = process.env.FROM_EMAIL || 'emmanx25@gmail.com';
+    const FROM_NAME = process.env.FROM_NAME || 'TWYIF Event Team';
 
     let emailSent = false;
     let sendError: string | null = null;
@@ -80,7 +81,7 @@ export async function POST(request: Request) {
         const resend = new Resend(RESEND_API_KEY);
 
         await resend.emails.send({
-          from: FROM_EMAIL,
+          from: `${FROM_NAME} <${FROM_EMAIL}>`,
           to: email,
           subject: 'RSVP: Public Presentation of the Women & Youth Impact Fund (TWYIF)',
           text: `Thank you for signing up for the Public Presentation of the 10 Billion Naira Women and Youth Impact Fund (TWYIF).\n\nWe look forward to you gracing the occasion with your participation.\n\nYours truly,\nThe organising committee.`,

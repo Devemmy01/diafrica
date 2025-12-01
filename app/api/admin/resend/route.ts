@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { generateICS } from '../../../../lib/ics';
+import fs from 'fs';
+import path from 'path';
 
 // Simple auth check
 function checkAuth(request: Request) {
@@ -34,6 +36,10 @@ export async function POST(request: Request) {
 
     const ics = generateICS({ start, end, summary, description, location });
 
+    // Read the image file
+    const imagePath = path.join(process.cwd(), 'public', 'diafrica3.jpeg');
+    const imageBuffer = fs.readFileSync(imagePath);
+
     const FROM_EMAIL = process.env.FROM_EMAIL || 'emmanx25@gmail.com';
     const FROM_NAME = process.env.FROM_NAME || 'TWYIF Event Team';
     let emailSent = false;
@@ -51,11 +57,23 @@ export async function POST(request: Request) {
           from: `${FROM_NAME} <${FROM_EMAIL}>`,
           to: email,
           subject: 'RSVP: Public Presentation of the Women & Youth Impact Fund (TWYIF)',
+          html: `
+            <div style="font-family: Arial, sans-serif; margin: 0 auto;">
+              <p>Thank you for signing up for the Public Presentation of the 10 Billion Naira Women and Youth Impact Fund (TWYIF).</p>
+              <p>We look forward to you gracing the occasion with your participation.</p>
+              <p>Yours truly,<br/>The organising committee.</p>
+            </div>
+          `,
           text: `Thank you for signing up for the Public Presentation of the 10 Billion Naira Women and Youth Impact Fund (TWYIF).\n\nWe look forward to you gracing the occasion with your participation.\n\nYours truly,\nThe organising committee.`,
           attachments: [
             {
-              content: Buffer.from(ics, 'utf8'),
               filename: 'twyif-invite.ics',
+              content: Buffer.from(ics, 'utf8'),
+            },
+            {
+              filename: 'diafrica3.jpeg',
+              content: imageBuffer,
+              content_id: 'diafrica-image',
             },
           ],
         });

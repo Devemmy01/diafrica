@@ -64,7 +64,7 @@ export default function RegisterPage() {
       <img
         src="/diafrica.jpeg"
         alt="TWYIF banner"
-        className="banner-im"
+        className="banner-i flex mx-auto"
         onError={(e) => {
           (e.target as HTMLImageElement).style.display = 'none';
         }}

@@ -62,7 +62,7 @@ export default function RegisterPage() {
       </header>
 
       <img
-        src="/diafrica.jpeg"
+        src="/invitation-flyer.jpeg"
         alt="TWYIF banner"
         className="banner-i flex mx-auto"
         onError={(e) => {
